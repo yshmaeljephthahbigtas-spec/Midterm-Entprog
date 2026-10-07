@@ -1,0 +1,104 @@
+@model List<Midterm_Entprog.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Cart";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">Shopping Cart</h1>
+
+    <a asp-controller="Products"
+       asp-action="Index"
+       class="btn btn-outline-light">
+        Continue Shopping
+    </a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="alert alert-secondary">
+        Your cart is empty.
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-dark table-bordered align-middle">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                    <th style="width: 120px;">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ProductName</td>
+
+                        <td>
+                            ₱@item.Price.ToString("0.00")
+                        </td>
+
+                        <td>
+                            <form asp-action="UpdateQuantity"
+                                  method="post"
+                                  class="d-flex gap-2">
+
+                                <input type="hidden"
+                                       name="id"
+                                       value="@item.Id" />
+
+                                <input type="number"
+                                       name="quantity"
+                                       value="@item.Quantity"
+                                       min="1"
+                                       class="form-control bg-dark text-light border-secondary"
+                                       style="width: 90px;" />
+
+                                <button type="submit"
+                                        class="btn btn-primary btn-sm">
+                                    Update
+                                </button>
+                            </form>
+                        </td>
+
+                        <td>
+                            ₱@((item.Price * item.Quantity).ToString("0.00"))
+                        </td>
+
+                        <td>
+                            <a asp-action="Remove"
+                               asp-route-id="@item.Id"
+                               class="btn btn-danger btn-sm"
+                               onclick="return confirm('Remove this item from cart?')">
+                                Remove
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-end mt-4">
+        <div class="card bg-dark text-light border-secondary"
+             style="min-width: 280px;">
+
+            <div class="card-body">
+                <h4 class="card-title">
+                    Cart Total
+                </h4>
+
+                <h2 class="mb-0">
+                    ₱@(((decimal)ViewBag.Total).ToString("0.00"))
+                </h2>
+            </div>
+
+        </div>
+    </div>
+}
